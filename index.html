@@ -13,12 +13,10 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
-
       background-image: url("fondo.png");
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-
       overflow: hidden;
     }
 
@@ -32,27 +30,206 @@
       height: 420px;
       position: relative;
       transform-style: preserve-3d;
-      transition: transform 0.5s ease;
-      cursor: pointer;
+      transition: transform 0.3s ease-out;
+      cursor: grab;
       border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       user-select: none;
       -webkit-user-select: none;
       -webkit-touch-callout: none;
     }
 
-    .card img {
+    .card:active {
+      cursor: grabbing;
+    }
+
+    .card-face {
       width: 100%;
       height: 100%;
       border-radius: 16px;
       position: absolute;
       backface-visibility: hidden;
+      overflow: hidden;
+    }
+
+    .card-face img {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
+      display: block;
       pointer-events: none;
     }
 
-    .card img.back {
+    .card-face.back {
       transform: rotateY(180deg);
+    }
+
+    /* 🌈 EFECTO ARCOIRIS INTENSO */
+    .card-face.front::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 16px;
+      background: 
+        linear-gradient(
+          115deg,
+          transparent 0%,
+          rgba(255, 0, 0, 0.3) 15%,
+          rgba(255, 127, 0, 0.3) 25%,
+          rgba(255, 255, 0, 0.3) 35%,
+          rgba(0, 255, 0, 0.3) 45%,
+          rgba(0, 255, 255, 0.3) 55%,
+          rgba(0, 0, 255, 0.3) 65%,
+          rgba(139, 0, 255, 0.3) 75%,
+          rgba(255, 0, 255, 0.3) 85%,
+          transparent 100%
+        );
+      background-size: 300% 300%;
+      background-position: 0% 50%;
+      mix-blend-mode: color-dodge;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      animation: rainbow-shift 6s ease-in-out infinite;
+    }
+
+    .card:hover .card-face.front::after {
+      opacity: 1;
+    }
+
+    @keyframes rainbow-shift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    /* ✨ BRILLO BLANCO DINÁMICO */
+    .card-face.front::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 16px;
+      background: radial-gradient(
+        circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(255, 255, 255, 0.8) 0%,
+        rgba(255, 255, 255, 0.4) 15%,
+        rgba(255, 255, 255, 0.2) 30%,
+        transparent 60%
+      );
+      mix-blend-mode: screen;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    .card:hover .card-face.front::before {
+      opacity: 1;
+    }
+
+    /* 💎 RELIEVE CON CUADRÍCULA DENSA */
+    .card-face.front .foil-texture {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 16px;
+      background-image: 
+        repeating-linear-gradient(
+          90deg,
+          transparent 0px,
+          transparent 1px,
+          rgba(255, 255, 255, 0.12) 1px,
+          rgba(255, 255, 255, 0.12) 2px,
+          transparent 2px,
+          transparent 4px
+        ),
+        repeating-linear-gradient(
+          0deg,
+          transparent 0px,
+          transparent 1px,
+          rgba(255, 255, 255, 0.1) 1px,
+          rgba(255, 255, 255, 0.1) 2px,
+          transparent 2px,
+          transparent 4px
+        ),
+        repeating-linear-gradient(
+          45deg,
+          transparent 0px,
+          transparent 2px,
+          rgba(255, 255, 255, 0.06) 2px,
+          rgba(255, 255, 255, 0.06) 3px
+        ),
+        repeating-linear-gradient(
+          -45deg,
+          transparent 0px,
+          transparent 2px,
+          rgba(255, 255, 255, 0.05) 2px,
+          rgba(255, 255, 255, 0.05) 3px
+        );
+      background-size: 4px 4px, 4px 4px, 6px 6px, 6px 6px;
+      mix-blend-mode: overlay;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .card:hover .card-face.front .foil-texture {
+      opacity: 1;
+      animation: texture-move 3s linear infinite;
+    }
+
+    @keyframes texture-move {
+      0% { background-position: 0 0, 0 0, 0 0, 0 0; }
+      100% { background-position: 4px 4px, 4px 4px, 6px 6px, 6px 6px; }
+    }
+
+    /* Capa extra de brillo arcoiris adicional */
+    .card-face.front .rainbow-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 16px;
+      background: 
+        linear-gradient(
+          45deg,
+          transparent 30%,
+          rgba(255, 0, 128, 0.2) 50%,
+          transparent 70%
+        ),
+        linear-gradient(
+          -45deg,
+          transparent 30%,
+          rgba(0, 255, 255, 0.2) 50%,
+          transparent 70%
+        );
+      mix-blend-mode: screen;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      animation: rainbow-sweep 4s ease-in-out infinite;
+    }
+
+    .card:hover .card-face.front .rainbow-overlay {
+      opacity: 1;
+    }
+
+    @keyframes rainbow-sweep {
+      0%, 100% { 
+        opacity: 0.3;
+        transform: translateX(-10px);
+      }
+      50% { 
+        opacity: 0.8;
+        transform: translateX(10px);
+      }
     }
 
     .buttons {
@@ -81,8 +258,14 @@
 
   <div class="container">
     <div class="card" id="card">
-      <img src="front.jpg" class="front" />
-      <img src="back.jpg" class="back" />
+      <div class="card-face front">
+        <img src="front.jpg" alt="Cynthia's Garchomp EX - Front" />
+        <div class="foil-texture"></div>
+        <div class="rainbow-overlay"></div>
+      </div>
+      <div class="card-face back">
+        <img src="back.jpg" alt="Cynthia's Garchomp EX - Back" />
+      </div>
     </div>
   </div>
 
@@ -93,21 +276,24 @@
   <script>
     const card = document.getElementById("card");
     const flipBtn = document.getElementById("flipBtn");
+    const frontFace = card.querySelector('.front');
 
     let flipped = false;
     let isDragging = false;
+    let animationFrame = null;
 
     flipBtn.addEventListener("click", () => {
       flipped = !flipped;
       resetTransform();
     });
 
-    function getBaseTransform() {
-      return `rotateY(${flipped ? 180 : 0}deg)`;
-    }
-
     function resetTransform() {
-      card.style.transform = getBaseTransform();
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+      animationFrame = requestAnimationFrame(() => {
+        const baseY = flipped ? 180 : 0;
+        card.style.transform = `rotateY(${baseY}deg)`;
+        card.style.transition = 'transform 0.4s ease-out';
+      });
     }
 
     function applyTilt(clientX, clientY) {
@@ -116,49 +302,87 @@
       const y = clientY - rect.top;
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
-      const rotateX = ((y - centerY) / centerY) * 100;
-      const rotateY = ((x - centerX) / centerX) * 100;
-      const baseY = flipped ? 180 : 0;
+      
+      // Calcular inclinación basada en la posición del mouse
+      let rotateX = ((y - centerY) / centerY) * 30;
+      let rotateY = ((x - centerX) / centerX) * 30;
+      
+      // Limitar a ±30 grados
+      rotateX = Math.max(-30, Math.min(30, rotateX));
+      rotateY = Math.max(-30, Math.min(30, rotateY));
+      
+      // 🔧 SOLO invertir rotateX cuando está girada (NO rotateY)
+      if (flipped) {
+        rotateX = -rotateX;
+      }
 
-      card.style.transform = `
-        rotateY(${baseY}deg)
-        rotateX(${-rotateX}deg)
-        rotateZ(${rotateY}deg)
-      `;
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+      animationFrame = requestAnimationFrame(() => {
+        card.style.transition = 'none';
+        const baseY = flipped ? 180 : 0;
+        card.style.transform = `
+          rotateY(${baseY + rotateY}deg)
+          rotateX(${-rotateX}deg)
+          scale(1.03)
+        `;
+      });
+
+      const percentX = (x / rect.width) * 100;
+      const percentY = (y / rect.height) * 100;
+      frontFace.style.setProperty('--mouse-x', `${percentX}%`);
+      frontFace.style.setProperty('--mouse-y', `${percentY}%`);
     }
 
-    // PC events
-    card.addEventListener("mousedown", () => { isDragging = true; });
-    card.addEventListener("mousemove", (e) => {
+    // === EVENTOS PC ===
+    card.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      card.style.cursor = 'grabbing';
+      applyTilt(e.clientX, e.clientY);
+    });
+
+    document.addEventListener("mousemove", (e) => {
       if (!isDragging) return;
       applyTilt(e.clientX, e.clientY);
     });
 
-    ["mouseup", "mouseleave"].forEach(event => {
-      card.addEventListener(event, () => {
-        if (isDragging) {
-          isDragging = false;
-          resetTransform();
-        }
-      });
+    document.addEventListener("mouseup", () => {
+      if (isDragging) {
+        isDragging = false;
+        card.style.cursor = 'grab';
+        resetTransform();
+      }
     });
 
-    // Mobile events
+    card.addEventListener("mouseleave", () => {
+      if (isDragging) {
+        isDragging = false;
+        card.style.cursor = 'grab';
+        resetTransform();
+      }
+    });
+
+    // === EVENTOS MÓVIL ===
     card.addEventListener("touchstart", (e) => { 
       isDragging = true;
-      e.preventDefault(); 
-    });
-
-    card.addEventListener("touchmove", (e) => {
-      if (!isDragging) return;
-      e.preventDefault();
+      card.style.cursor = 'grabbing';
       const touch = e.touches[0];
       applyTilt(touch.clientX, touch.clientY);
-    });
+      e.preventDefault(); 
+    }, { passive: false });
 
-    card.addEventListener("touchend", () => {
-      isDragging = false;
-      resetTransform();
+    document.addEventListener("touchmove", (e) => {
+      if (!isDragging) return;
+      const touch = e.touches[0];
+      applyTilt(touch.clientX, touch.clientY);
+      e.preventDefault();
+    }, { passive: false });
+
+    document.addEventListener("touchend", () => {
+      if (isDragging) {
+        isDragging = false;
+        card.style.cursor = 'grab';
+        resetTransform();
+      }
     });
 
     resetTransform();
