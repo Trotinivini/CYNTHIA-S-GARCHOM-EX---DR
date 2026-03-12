@@ -2,9 +2,13 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>CYNTHIA'S GARCHOMP EX - DESTINED RIVALS</title>
   <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
       margin: 0;
       font-family: sans-serif;
@@ -12,12 +16,13 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       background-image: url("fondo.png");
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       overflow: hidden;
+      touch-action: none;
     }
 
     .container {
@@ -64,7 +69,7 @@
       transform: rotateY(180deg);
     }
 
-    /* 🌈 EFECTO ARCOIRIS INTENSO */
+    /* 🌈 EFECTO ARCOIRIS - Visible siempre en móvil */
     .card-face.front::after {
       content: '';
       position: absolute;
@@ -90,14 +95,20 @@
       background-size: 300% 300%;
       background-position: 0% 50%;
       mix-blend-mode: color-dodge;
-      opacity: 0;
+      opacity: 0.7; /* ✅ Visible por defecto en móvil */
       transition: opacity 0.3s ease;
       pointer-events: none;
       animation: rainbow-shift 6s ease-in-out infinite;
     }
 
-    .card:hover .card-face.front::after {
-      opacity: 1;
+    /* En desktop se muestra en hover, en móvil siempre visible */
+    @media (hover: hover) {
+      .card-face.front::after {
+        opacity: 0;
+      }
+      .card:hover .card-face.front::after {
+        opacity: 1;
+      }
     }
 
     @keyframes rainbow-shift {
@@ -122,13 +133,18 @@
         transparent 60%
       );
       mix-blend-mode: screen;
-      opacity: 0;
+      opacity: 0.6; /* ✅ Visible por defecto en móvil */
       transition: opacity 0.2s ease;
       pointer-events: none;
     }
 
-    .card:hover .card-face.front::before {
-      opacity: 1;
+    @media (hover: hover) {
+      .card-face.front::before {
+        opacity: 0;
+      }
+      .card:hover .card-face.front::before {
+        opacity: 1;
+      }
     }
 
     /* 💎 RELIEVE CON CUADRÍCULA DENSA */
@@ -174,14 +190,19 @@
         );
       background-size: 4px 4px, 4px 4px, 6px 6px, 6px 6px;
       mix-blend-mode: overlay;
-      opacity: 0;
+      opacity: 0.8; /* ✅ Visible por defecto en móvil */
       transition: opacity 0.3s ease;
       pointer-events: none;
+      animation: texture-move 3s linear infinite;
     }
 
-    .card:hover .card-face.front .foil-texture {
-      opacity: 1;
-      animation: texture-move 3s linear infinite;
+    @media (hover: hover) {
+      .card-face.front .foil-texture {
+        opacity: 0;
+      }
+      .card:hover .card-face.front .foil-texture {
+        opacity: 1;
+      }
     }
 
     @keyframes texture-move {
@@ -189,7 +210,7 @@
       100% { background-position: 4px 4px, 4px 4px, 6px 6px, 6px 6px; }
     }
 
-    /* Capa extra de brillo arcoiris adicional */
+    /* Capa extra de brillo arcoiris */
     .card-face.front .rainbow-overlay {
       position: absolute;
       top: 0;
@@ -211,14 +232,19 @@
           transparent 70%
         );
       mix-blend-mode: screen;
-      opacity: 0;
+      opacity: 0.5; /* ✅ Visible por defecto en móvil */
       transition: opacity 0.3s ease;
       pointer-events: none;
       animation: rainbow-sweep 4s ease-in-out infinite;
     }
 
-    .card:hover .card-face.front .rainbow-overlay {
-      opacity: 1;
+    @media (hover: hover) {
+      .card-face.front .rainbow-overlay {
+        opacity: 0;
+      }
+      .card:hover .card-face.front .rainbow-overlay {
+        opacity: 1;
+      }
     }
 
     @keyframes rainbow-sweep {
@@ -229,6 +255,14 @@
       50% { 
         opacity: 0.8;
         transform: translateX(10px);
+      }
+    }
+
+    /* 📱 RESPONSIVE PARA MÓVIL */
+    @media (max-width: 480px) {
+      .card {
+        width: 260px;
+        height: 364px;
       }
     }
 
@@ -247,10 +281,15 @@
       cursor: pointer;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
       transition: background 0.3s;
+      -webkit-tap-highlight-color: transparent;
     }
 
     button:hover {
       background: #1b4ea0;
+    }
+
+    button:active {
+      transform: scale(0.95);
     }
   </style>
 </head>
@@ -282,6 +321,9 @@
     let isDragging = false;
     let animationFrame = null;
 
+    // Detectar si es dispositivo táctil
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
     flipBtn.addEventListener("click", () => {
       flipped = !flipped;
       resetTransform();
@@ -303,15 +345,12 @@
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
       
-      // Calcular inclinación basada en la posición del mouse
       let rotateX = ((y - centerY) / centerY) * 30;
       let rotateY = ((x - centerX) / centerX) * 30;
       
-      // Limitar a ±30 grados
       rotateX = Math.max(-30, Math.min(30, rotateX));
       rotateY = Math.max(-30, Math.min(30, rotateY));
       
-      // 🔧 SOLO invertir rotateX cuando está girada (NO rotateY)
       if (flipped) {
         rotateX = -rotateX;
       }
@@ -361,29 +400,37 @@
       }
     });
 
-    // === EVENTOS MÓVIL ===
+    // === EVENTOS MÓVIL MEJORADOS ===
     card.addEventListener("touchstart", (e) => { 
       isDragging = true;
       card.style.cursor = 'grabbing';
       const touch = e.touches[0];
       applyTilt(touch.clientX, touch.clientY);
       e.preventDefault(); 
-    }, { passive: false });
+    }, { passive: false, capture: true });
 
     document.addEventListener("touchmove", (e) => {
       if (!isDragging) return;
       const touch = e.touches[0];
       applyTilt(touch.clientX, touch.clientY);
       e.preventDefault();
-    }, { passive: false });
+    }, { passive: false, capture: true });
 
-    document.addEventListener("touchend", () => {
+    document.addEventListener("touchend", (e) => {
       if (isDragging) {
         isDragging = false;
         card.style.cursor = 'grab';
         resetTransform();
       }
-    });
+    }, { capture: true });
+
+    document.addEventListener("touchcancel", () => {
+      if (isDragging) {
+        isDragging = false;
+        card.style.cursor = 'grab';
+        resetTransform();
+      }
+    }, { capture: true });
 
     resetTransform();
   </script>
